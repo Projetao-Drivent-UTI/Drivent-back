@@ -188,7 +188,7 @@ describe("GET /hotels/:hotelId", () => {
       expect(response.status).toEqual(httpStatus.NOT_FOUND);
     });
 
-    it.only("should respond with status 200 and hotel with rooms", async () => {
+    it("should respond with status 200 and hotel with rooms", async () => {
       const user = await createUser();
       const token = await generateValidToken(user);
       const enrollment = await createEnrollmentWithAddress(user);
@@ -201,7 +201,7 @@ describe("GET /hotels/:hotelId", () => {
 
       const createdRoom = await createRoomWithHotelId(createdHotel.id);
       const createdRoom2 = await createRoomWithHotelId(createdHotel.id);
-      await createBooking({
+      const booking = await createBooking({
         userId: user.id,
         roomId: createdRoom2.id,
       });
@@ -209,7 +209,6 @@ describe("GET /hotels/:hotelId", () => {
       const response = await server.get(`/hotels/${createdHotel.id}`).set("Authorization", `Bearer ${token}`);
 
       expect(response.status).toEqual(httpStatus.OK);
-
       expect(response.body).toEqual({
         id: createdHotel.id,
         name: createdHotel.name,
@@ -217,13 +216,31 @@ describe("GET /hotels/:hotelId", () => {
         createdAt: createdHotel.createdAt.toISOString(),
         updatedAt: createdHotel.updatedAt.toISOString(),
         Rooms: [{
+          Booking: [],
           id: createdRoom.id,
           name: createdRoom.name,
           capacity: createdRoom.capacity,
           hotelId: createdHotel.id,
           createdAt: createdRoom.createdAt.toISOString(),
           updatedAt: createdRoom.updatedAt.toISOString(),
-        }]
+        },
+        {
+          Booking: [{
+            createdAt: booking.createdAt.toISOString(), 
+            updatedAt: booking.updatedAt.toISOString(),
+            id: booking.id,
+            roomId: booking.roomId,
+            userId: booking.userId,
+          }],
+          id: createdRoom2.id,
+          name: createdRoom2.name,
+          capacity: createdRoom2.capacity,
+          hotelId: createdHotel.id,
+          createdAt: createdRoom2.createdAt.toISOString(),
+          updatedAt: createdRoom2.updatedAt.toISOString(),
+        }
+      
+        ]
       });
     });
 
@@ -233,7 +250,7 @@ describe("GET /hotels/:hotelId", () => {
       const enrollment = await createEnrollmentWithAddress(user);
       const ticketType = await createTicketTypeWithHotel();
       const ticket = await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
-      const payment = await createPayment(ticket.id, ticketType.price);
+      await createPayment(ticket.id, ticketType.price);
 
       const createdHotel = await createHotel();
 
