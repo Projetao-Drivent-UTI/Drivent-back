@@ -81,7 +81,7 @@ describe("GET /hotels", () => {
       expect(response.status).toEqual(httpStatus.NOT_FOUND);
     });
 
-    it.only("should respond with status 200 and a list of hotels", async () => {
+    it("should respond with status 200 and a list of hotels", async () => {
       const user = await createUser();
       const token = await generateValidToken(user);
       const enrollment = await createEnrollmentWithAddress(user);
@@ -98,7 +98,7 @@ describe("GET /hotels", () => {
 
       const otherRoom = await createRoomWithHotelId(createdHotel.id);
       const response = await server.get("/hotels").set("Authorization", `Bearer ${token}`);
-      console.log(response.body);
+    
       expect(response.status).toEqual(httpStatus.OK);
 
       expect(response.body).toEqual([
@@ -107,7 +107,33 @@ describe("GET /hotels", () => {
           name: createdHotel.name,
           image: createdHotel.image,
           createdAt: createdHotel.createdAt.toISOString(),
-          updatedAt: createdHotel.updatedAt.toISOString()
+          updatedAt: createdHotel.updatedAt.toISOString(),
+          Rooms: [
+            {
+              Booking: [{
+                id: booking.id,
+                createdAt: booking.createdAt.toISOString(),
+                updatedAt: booking.updatedAt.toISOString(),
+                userId: booking.userId,
+                roomId: booking.roomId
+              }],
+              capacity: room.capacity,
+              createdAt: room.createdAt.toISOString(),
+              updatedAt: room.updatedAt.toISOString(),
+              hotelId: room.hotelId,
+              id: room.id,
+              name: room.name
+            },
+            {
+              Booking: [],
+              capacity: otherRoom.capacity,
+              createdAt: otherRoom.createdAt.toISOString(),
+              updatedAt: otherRoom.updatedAt.toISOString(),
+              hotelId: otherRoom.hotelId,
+              id: otherRoom.id,
+              name: otherRoom.name
+            }
+          ]
         }
       ]);
     });
