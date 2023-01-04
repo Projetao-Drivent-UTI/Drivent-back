@@ -90,9 +90,15 @@ describe("GET /hotels", () => {
       const payment = await createPayment(ticket.id, ticketType.price);
 
       const createdHotel = await createHotel();
+      const room = await createRoomWithHotelId(createdHotel.id);
+      const booking = await createBooking({
+        roomId: room.id,
+        userId: user.id,
+      });
 
+      const otherRoom = await createRoomWithHotelId(createdHotel.id);
       const response = await server.get("/hotels").set("Authorization", `Bearer ${token}`);
-
+    
       expect(response.status).toEqual(httpStatus.OK);
 
       expect(response.body).toEqual([
@@ -101,7 +107,33 @@ describe("GET /hotels", () => {
           name: createdHotel.name,
           image: createdHotel.image,
           createdAt: createdHotel.createdAt.toISOString(),
-          updatedAt: createdHotel.updatedAt.toISOString()
+          updatedAt: createdHotel.updatedAt.toISOString(),
+          Rooms: [
+            {
+              Booking: [{
+                id: booking.id,
+                createdAt: booking.createdAt.toISOString(),
+                updatedAt: booking.updatedAt.toISOString(),
+                userId: booking.userId,
+                roomId: booking.roomId
+              }],
+              capacity: room.capacity,
+              createdAt: room.createdAt.toISOString(),
+              updatedAt: room.updatedAt.toISOString(),
+              hotelId: room.hotelId,
+              id: room.id,
+              name: room.name
+            },
+            {
+              Booking: [],
+              capacity: otherRoom.capacity,
+              createdAt: otherRoom.createdAt.toISOString(),
+              updatedAt: otherRoom.updatedAt.toISOString(),
+              hotelId: otherRoom.hotelId,
+              id: otherRoom.id,
+              name: otherRoom.name
+            }
+          ]
         }
       ]);
     });
