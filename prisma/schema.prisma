@@ -141,21 +141,24 @@ model Booking {
 }
 
 model Activity {
-  id        Int      @id @default(autoincrement())
-  name      String
-  date      DateTime
-  start     String
-  end       String
-  capacity  Int
-  location  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                   Int                    @id @default(autoincrement())
+  name                 String
+  date                 DateTime
+  start                String
+  end                  String
+  capacity             Int
+  location             String
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  ActivitySubscription ActivitySubscription[]
 }
 
 model ActivitySubscription {
-  id        Int      @id @default(autoincrement())
-  User      User     @relation(fields: [userId], references: [id])
-  userId    Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  activityId Int
+  User       User     @relation(fields: [userId], references: [id])
+  Activity   Activity @relation(fields: [activityId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
