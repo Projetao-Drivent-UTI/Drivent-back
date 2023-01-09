@@ -1,6 +1,6 @@
 import { prisma } from "@/config";
 
-async function getActivitiesWithSubscriptions(userId?: number) {
+async function getActivitiesWithSubscriptions() {
   return prisma.activity.findMany({
     include: {
       ActivitySubscription: {

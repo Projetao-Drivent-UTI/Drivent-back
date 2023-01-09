@@ -13,7 +13,7 @@ async function getActivities(userId: number) {
   if (ticket === null || ticket.status !== "PAID" || ticket.TicketType.isRemote || !ticket.TicketType.includesHotel) {
     throw cannotSubscribeError();
   }
-  const activities = await activitiesRepository.getActivitiesWithSubscriptions(userId);
+  const activities = await activitiesRepository.getActivitiesWithSubscriptions();
   activities.forEach((activity) => {
     activity.ActivitySubscription.forEach((activitySubscription) => {
       if (activitySubscription.userId !== userId) return exclude(activitySubscription, "userId");
