@@ -6,13 +6,13 @@ import { cannotSubscribeError } from "./errors";
 import { exclude } from "@/utils/prisma-utils";
 
 async function getActivities(userId: number) {
-  /* const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
+  const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
   if (enrollment === null) throw notFoundError();
   const ticket = await ticketRepository.findTicketByEnrollmentId(enrollment.id);
 
   if (ticket === null || ticket.status !== "PAID" || ticket.TicketType.isRemote || !ticket.TicketType.includesHotel) {
     throw cannotSubscribeError();
-  } */
+  }
   const activities = await activitiesRepository.getActivitiesWithSubscriptions(userId);
   activities.forEach((activity) => {
     activity.ActivitySubscription.forEach((activitySubscription) => {
