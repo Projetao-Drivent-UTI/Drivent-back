@@ -1,11 +1,12 @@
 import { prisma } from "@/config";
 
-async function getActivitiesWithSubscriptions(userId: number) {
+async function getActivitiesWithSubscriptions(userId?: number) {
   return prisma.activity.findMany({
     include: {
       ActivitySubscription: {
-        where: {
-          userId: userId,
+        select: {
+          activityId: true,
+          userId: true,
         },
       },
     },

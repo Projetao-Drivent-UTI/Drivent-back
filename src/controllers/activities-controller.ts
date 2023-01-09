@@ -10,6 +10,9 @@ export async function getActivities(req: AuthenticatedRequest, res: Response) {
     const activities = await activitiesService.getActivities(Number(userId));
     return res.status(httpStatus.OK).send(activities);
   } catch (error) {
-    return res.sendStatus(httpStatus.BAD_REQUEST);
+    if (error.name === "CannotSubscribeError") {
+      return res.status(httpStatus.UNAUTHORIZED).send(error);
+    }
+    return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
   }
 }
