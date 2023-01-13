@@ -16,3 +16,27 @@ export async function getActivities(req: AuthenticatedRequest, res: Response) {
     return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
   }
 }
+
+export async function postActivitySubscription(req: AuthenticatedRequest, res: Response) {
+  const { userId, body } = req;
+  const { activityId } = body;
+
+  try {
+    await activitiesService.postActivitySubscription(Number(userId), activityId);
+    return res.sendStatus(httpStatus.CREATED);
+  } catch (error) {
+    if (error.name === "CanNotSubscribeError") {
+      return res.status(httpStatus.UNAUTHORIZED).send(error);
+    }
+    if (error.name === "UserAlreadySubscribedError") {
+      return res.status(httpStatus.CONFLICT).send(error);
+    }
+    if (error.name === "WithoutVacanciesError") {
+      return res.status(httpStatus.UNAUTHORIZED).send(error);
+    }
+    if (error.name === "CanNotCreateActivitySubscriptionError") {
+      return res.status(httpStatus.UNAUTHORIZED).send(error);
+    }
+    return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+  }
+}
