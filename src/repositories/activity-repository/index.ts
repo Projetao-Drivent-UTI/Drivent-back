@@ -1,18 +1,48 @@
 import { prisma } from "@/config";
-import { Activity } from "@prisma/client";
+import { ActivitySubscription } from "@prisma/client";
 
-async function findActivityByDay(day: Date) {
+async function getActivitiesWithSubscriptions() {
   return prisma.activity.findMany({
-    where: {
-      date: day,
-    },
     include: {
-      ActivitySubscription: true
-    }
+      ActivitySubscription: {
+        select: {
+          activityId: true,
+          userId: true,
+        },
+      },
+    },
   });
 }
-const activityRepository = {
-  findActivityByDay,
+
+async function getActivitiesWithSubscriptionsById(id: number) {
+  return prisma.activity.findFirst({
+    where: {
+      id,
+    },
+    include: {
+      ActivitySubscription: {
+        select: {
+          activityId: true,
+          userId: true,
+        },
+      },
+    },
+  });
+}
+
+async function createActivitySubscription(body: Pick<ActivitySubscription, "userId" | "activityId">) {
+  return prisma.activitySubscription.create({
+    data: {
+      userId: body.userId,
+      activityId: body.activityId,
+    },
+  });
+}
+
+const activitiesRepository = {
+  getActivitiesWithSubscriptions,
+  createActivitySubscription,
+  getActivitiesWithSubscriptionsById,
 };
-  
-export default activityRepository;
+
+export default activitiesRepository;
