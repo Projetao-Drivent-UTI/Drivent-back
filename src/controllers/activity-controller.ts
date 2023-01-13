@@ -3,7 +3,7 @@ import { Response } from "express";
 import httpStatus from "http-status";
 import activityService from "@/services/activity-service";
 
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 
 export async function listActivies(req: AuthenticatedRequest, res: Response) {
   try {
