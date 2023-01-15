@@ -9,6 +9,7 @@ async function main() {
   const ticketTypes = await prisma.ticketType.findFirst();
   const hotels = await prisma.hotel.findFirst();
 
+
   if (!event) {
     event = await prisma.event.create({
       data: {
