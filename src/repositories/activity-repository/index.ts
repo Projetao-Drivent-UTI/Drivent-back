@@ -14,25 +14,25 @@ async function getActivitiesWithSubscriptions() {
   });
 }
 async function getActivitiesWithSubscriptionsByDay(date: Date) {
-    return prisma.activity.findMany({
-      where:{
-        date: date
-      },
-      include: {
-        ActivitySubscription: {
-          select: {
-            activityId: true,
-            userId: true,
-          },
+  return prisma.activity.findMany({
+    where: {
+      date: date
+    },
+    include: {
+      ActivitySubscription: {
+        select: {
+          activityId: true,
+          userId: true,
         },
       },
-    });
-  }
+    },
+  });
+}
 
 async function getActivitiesDates() {
-    return prisma.activity.findMany({
-    });
-  }
+  return prisma.activity.findMany({
+  });
+}
 
 async function getActivitiesWithSubscriptionsById(id: number) {
   return prisma.activity.findFirst({

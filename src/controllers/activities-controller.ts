@@ -2,7 +2,7 @@ import { Response } from "express";
 import { AuthenticatedRequest } from "@/middlewares";
 import activitiesService from "@/services/activities-service";
 import httpStatus from "http-status";
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 
 export async function getActivities(req: AuthenticatedRequest, res: Response) {
   const { userId } = req;
@@ -23,7 +23,7 @@ export async function getActivitiesByDay(req: AuthenticatedRequest, res: Respons
   const { date } = req.params;
 
   try {
-    const activities = await activitiesService.getActivitiesByDay(Number(userId), dayjs(date, 'DD-MM-YYYY HH:mm:ss.SSS').toDate());
+    const activities = await activitiesService.getActivitiesByDay(Number(userId), dayjs(date, "DD-MM-YYYY HH:mm:ss.SSS").toDate());
     return res.status(httpStatus.OK).send(activities);
   } catch (error) {
     if (error.name === "CannotSubscribeError") {

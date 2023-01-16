@@ -9,7 +9,7 @@ import {
   canNotCreateActivitySubscriptionError,
 } from "./errors";
 import { exclude } from "@/utils/prisma-utils";
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 
 async function getActivities(userId: number) {
   await hasEnrollmentAndPaidTicketOrFail(userId);
@@ -25,7 +25,7 @@ async function getActivities(userId: number) {
 }
 async function getActivitiesByDay(userId: number, date: Date) {
   await hasEnrollmentAndPaidTicketOrFail(userId);
-  console.log(date)
+  console.log(date);
   const activities = await activitiesRepository.getActivitiesWithSubscriptionsByDay(date);
   activities.forEach((activity) => {
     activity.ActivitySubscription.forEach((activitySubscription) => {
@@ -41,9 +41,9 @@ async function getDates(userId: number) {
 
   const alldates = await activitiesRepository.getActivitiesDates();
   const dates: string[] = []; 
-  alldates.sort((a,b)=>a.date.getTime()-b.date.getTime());
+  alldates.sort((a, b) => a.date.getTime()-b.date.getTime());
   alldates.map((d) => {
-    const date = dayjs(d.date).format('YYYY-MM-DD HH:mm:ss.SSS');
+    const date = dayjs(d.date).format("YYYY-MM-DD HH:mm:ss.SSS");
     if (!dates.includes(date)) {
       dates.push(date);
     }});
