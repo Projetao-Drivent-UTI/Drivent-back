@@ -8,6 +8,9 @@ async function main() {
   let activities = await prisma.activity.findFirst();
   const ticketTypes = await prisma.ticketType.findFirst();
   const hotels = await prisma.hotel.findFirst();
+  const startDate = dayjs().toDate();
+  const endDate = dayjs(startDate).add(2,'days').toDate();
+  const middleDay = dayjs(startDate).add(1,'days').toDate();
 
 
   if (!event) {
@@ -16,8 +19,8 @@ async function main() {
         title: "Driven.t",
         logoImageUrl: "https://files.driveneducation.com.br/images/logo-rounded.png",
         backgroundImageUrl: "linear-gradient(to right, #FA4098, #FFD77F)",
-        startsAt: dayjs().toDate(),
-        endsAt: dayjs().add(21, "days").toDate(),
+        startsAt: startDate,
+        endsAt: endDate,
       },
     });
   }
@@ -27,7 +30,7 @@ async function main() {
       data: [
         {
           capacity: Number(faker.random.numeric(undefined, { bannedDigits: ["1"] })),
-          date: faker.date.future(),
+          date: endDate,
           start: "09:00",
           end: "10:00",
           name: faker.name.firstName(),
@@ -35,15 +38,15 @@ async function main() {
         },
         {
           capacity: Number(faker.random.numeric()),
-          date: faker.date.future(),
-          start: "10:00",
-          end: "11:00",
+          date: startDate,
+          start: "14:00",
+          end: "15:00",
           name: faker.name.firstName(),
           location: "Auditório Principal",
         },
         {
           capacity: Number(faker.random.numeric()),
-          date: faker.date.future(),
+          date: startDate,
           start: "11:00",
           end: "12:00",
           name: faker.name.firstName(),
@@ -51,7 +54,7 @@ async function main() {
         },
         {
           capacity: Number(faker.random.numeric()),
-          date: faker.date.future(),
+          date: middleDay,
           start: "08:00",
           end: "12:00",
           name: faker.name.firstName(),
@@ -59,7 +62,7 @@ async function main() {
         },
         {
           capacity: Number(faker.random.numeric()),
-          date: faker.date.future(),
+          date: endDate,
           start: "07:00",
           end: "08:00",
           name: faker.name.firstName(),
@@ -67,7 +70,7 @@ async function main() {
         },
         {
           capacity: Number(faker.random.numeric()),
-          date: faker.date.future(),
+          date: endDate,
           start: "10:00",
           end: "10:30",
           name: faker.name.firstName(),
@@ -146,7 +149,7 @@ async function main() {
       });
     });
   }
-  console.log({ event });
+  console.log({ event }, 'event' );
 }
 
 main()
