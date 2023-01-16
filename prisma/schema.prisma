@@ -151,6 +151,7 @@ model Activity {
   createdAt            DateTime               @default(now())
   updatedAt            DateTime               @updatedAt
   ActivitySubscription ActivitySubscription[]
+  @@index([date])
 }
 
 model ActivitySubscription {
