@@ -148,7 +148,7 @@ async function main() {
       });
     });
   }
-  console.log({ event }, 'event' );
+  console.log({ event }, "event");
 }
 
 main()

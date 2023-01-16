@@ -9,10 +9,20 @@ import {
   canNotCreateActivitySubscriptionError,
 } from "./errors";
 import { exclude } from "@/utils/prisma-utils";
+import { redisClient } from "../../utils/redis-service";
 import dayjs from "dayjs";
 
 async function getActivities(userId: number) {
   await hasEnrollmentAndPaidTicketOrFail(userId);
+
+  if (ticket === null || ticket.status !== "PAID" || ticket.TicketType.isRemote || !ticket.TicketType.includesHotel) {
+    throw cannotSubscribeError();
+  }
+
+  if (await redisClient.exists("activities")) {
+    const cache = await redisClient.get("activities");
+    return JSON.parse(cache);
+  }
 
   const activities = await activitiesRepository.getActivitiesWithSubscriptions();
   activities.forEach((activity) => {
@@ -20,6 +30,8 @@ async function getActivities(userId: number) {
       if (activitySubscription.userId !== userId) return exclude(activitySubscription, "userId");
     });
   });
+
+  await redisClient.set("activities", JSON.stringify(activities));
 
   return activities;
 }
