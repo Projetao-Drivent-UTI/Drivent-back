@@ -6,13 +6,9 @@ import eventsService from "../events-service";
 import { duplicatedEmailError } from "./errors";
 
 export async function createUser({ email, password }: CreateUserParams): Promise<User> {
-  console.log("aqui", 8, email, password);
   await canEnrollOrFail();
-  console.log("aqui", 9);
   await validateUniqueEmailOrFail(email);
-  console.log("aqui", 10);
   const hashedPassword = await bcrypt.hash(password, 12);
-  console.log("aqui", 11);
   return userRepository.create({
     email,
     password: hashedPassword,

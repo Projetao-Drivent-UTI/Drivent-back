@@ -12,6 +12,7 @@ async function main() {
   const endDate = dayjs(startDate).add(2,'days').toDate();
   const middleDay = dayjs(startDate).add(1,'days').toDate();
 
+
   if (!event) {
     event = await prisma.event.create({
       data: {
