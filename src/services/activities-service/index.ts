@@ -9,6 +9,7 @@ import {
   canNotCreateActivitySubscriptionError,
 } from "./errors";
 import { exclude } from "@/utils/prisma-utils";
+import dayjs from 'dayjs';
 
 async function getActivities(userId: number) {
   await hasEnrollmentAndPaidTicketOrFail(userId);
@@ -21,6 +22,32 @@ async function getActivities(userId: number) {
   });
 
   return activities;
+}
+async function getActivitiesByDay(userId: number, date: Date) {
+  await hasEnrollmentAndPaidTicketOrFail(userId);
+  console.log(date)
+  const activities = await activitiesRepository.getActivitiesWithSubscriptionsByDay(date);
+  activities.forEach((activity) => {
+    activity.ActivitySubscription.forEach((activitySubscription) => {
+      if (activitySubscription.userId !== userId) return exclude(activitySubscription, "userId");
+    });
+  });
+
+  return activities;
+}
+
+async function getDates(userId: number) {
+  await hasEnrollmentAndPaidTicketOrFail(userId);
+
+  const alldates = await activitiesRepository.getActivitiesDates();
+  const dates: string[] = []; 
+  alldates.sort((a,b)=>a.date.getTime()-b.date.getTime());
+  alldates.map((d) => {
+    const date = dayjs(d.date).format('YYYY-MM-DD HH:mm:ss.SSS');
+    if (!dates.includes(date)) {
+      dates.push(date);
+    }});
+  return dates;
 }
 
 async function postActivitySubscription(userId: number, activityId: number) {
@@ -53,6 +80,8 @@ async function hasEnrollmentAndPaidTicketOrFail(userId: number) {
 const activitiesService = {
   getActivities,
   postActivitySubscription,
+  getDates,
+  getActivitiesByDay
 };
 
 export default activitiesService;
